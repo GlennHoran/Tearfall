@@ -16,9 +16,14 @@ import stonering.game.model.lists.PlantContainer;
 import stonering.game.model.local_map.LocalMap;
 import stonering.util.global.TagLoggersEnum;
 
+/**
+ * Action for chopping trees.
+ * Checks that target position contains tree {@link PlantBlock} and performer has tool for chopping.
+ */
 public class ChopTreeAction extends Action {
     private ItemSelector toolItemSelector;
 
+    //TODO replace target with plantActionTarget to track specific trees.
     public ChopTreeAction(Designation designation) {
         super(new PositionActionTarget(designation.getPosition(), false, true));
         toolItemSelector = new ToolWithActionItemSelector("chop");
@@ -30,9 +35,14 @@ public class ChopTreeAction extends Action {
         if (aspect == null) return false;
         PlantBlock block = GameMvc.instance().getModel().get(LocalMap.class).getPlantBlock(actionTarget.getPosition());
         if (block == null) return false;
+        if(!(block.getPlant() instanceof Tree)) return false;
         return toolItemSelector.check(aspect.getEquippedItems()) || addActionToTask();
     }
 
+    /**
+     * Create action for equipping available chopping tool.
+     * @return
+     */
     private boolean addActionToTask() {
         Item target = GameMvc.instance().getModel().get(ItemContainer.class).getItemAvailableBySelector(toolItemSelector, task.getPerformer().getPosition());
         if (target == null) return false;
@@ -43,26 +53,13 @@ public class ChopTreeAction extends Action {
 
     @Override
     public void performLogic() {
-        logStart();
+        TagLoggersEnum.TASKS.logDebug("tree chopping started at " + actionTarget.getPosition().toString() + " by " + task.getPerformer().toString());
         PlantBlock block = GameMvc.instance().getModel().get(LocalMap.class).getPlantBlock(actionTarget.getPosition());
+        if(block == null) return;
         AbstractPlant plant = block.getPlant();
         if (plant.getType().isTree()) {
-            cutTree((Tree) plant);
-        } else {
-            cutPlant((Plant) plant);
+            GameMvc.instance().getModel().get(PlantContainer.class).removePlantBlock(block, true, true);
         }
-    }
-
-    private void cutTree(Tree tree) {
-        GameMvc.instance().getModel().get(PlantContainer.class).removeTree(tree);
-    }
-
-    private void cutPlant(Plant plant) {
-        GameMvc.instance().getModel().get(PlantContainer.class).removePlant(plant);
-    }
-
-    private void logStart() {
-        TagLoggersEnum.TASKS.logDebug("tree chopping started at " + actionTarget.getPosition().toString() + " by " + task.getPerformer().toString());
     }
 
     @Override

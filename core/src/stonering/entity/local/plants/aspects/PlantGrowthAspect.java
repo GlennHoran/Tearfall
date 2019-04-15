@@ -6,6 +6,7 @@ import stonering.entity.local.environment.GameCalendar;
 import stonering.entity.local.plants.AbstractPlant;
 import stonering.entity.local.plants.Plant;
 import stonering.entity.local.plants.Tree;
+import stonering.enums.OrientationEnum;
 import stonering.game.GameMvc;
 import stonering.game.model.lists.PlantContainer;
 import stonering.generators.plants.PlantGenerator;
@@ -66,7 +67,10 @@ public class PlantGrowthAspect extends Aspect {
      * Kill this plant and leave products(if any).
      */
     private void die() {
-        //TODO
-        ((AbstractPlant) aspectHolder).setDead(true);
+        if (aspectHolder instanceof Tree) {
+            GameMvc.instance().getModel().get(PlantContainer.class).fellTree((Tree) aspectHolder, OrientationEnum.N, false);
+        } else if (aspectHolder instanceof Plant) {
+            GameMvc.instance().getModel().get(PlantContainer.class).removePlant((Plant) aspectHolder, true);
+        }
     }
 }

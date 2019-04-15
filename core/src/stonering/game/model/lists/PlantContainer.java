@@ -2,6 +2,7 @@ package stonering.game.model.lists;
 
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import stonering.enums.OrientationEnum;
 import stonering.enums.blocks.BlockTypesEnum;
 import stonering.game.GameMvc;
@@ -15,26 +16,27 @@ import stonering.entity.local.plants.AbstractPlant;
 import stonering.entity.local.plants.Plant;
 import stonering.entity.local.plants.PlantBlock;
 import stonering.entity.local.plants.Tree;
+import stonering.util.global.CompatibleArray;
 import stonering.util.global.Initable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Contains plants on localMap. Trees are stored by their parts as separate plants.
  * Destroyed entity do not persist in container and their blocks are not in localMap.
- * <p>
  *
  * @author Alexander Kuzyakov on 09.11.2017.
  */
 public class PlantContainer extends IntervalTurnable implements Initable, ModelComponent {
     private GameMvc gameMvc;
-    private List<AbstractPlant> plants;
+    private CompatibleArray<AbstractPlant> plants;
     private LocalMap localMap;
     private final int WALL_CODE = BlockTypesEnum.WALL.CODE;
 
     public PlantContainer(List<AbstractPlant> plants) {
-        this.plants = plants;
+        this.plants = new CompatibleArray<>(plants);
     }
 
     @Override
@@ -85,17 +87,14 @@ public class PlantContainer extends IntervalTurnable implements Initable, ModelC
         }
     }
 
-    /**
-     * Deletes plant from map and container
-     *
-     * @param plant
-     */
-    public void removePlant(Plant plant) {
-        if (plants.remove(plant)) localMap.setPlantBlock(plant.getPosition(), null);
+    public void removePlant(Plant plant, boolean leaveProduct) {
+        PlantBlock block = plant.getBlock();
+        if (plants.removeValue(plant,true)) localMap.setPlantBlock(plant.getPosition(), null);
+        if(leaveProduct) leavePlantProduct(block);
     }
 
-    public void removeTree(Tree tree) {
-        if (plants.remove(tree)) {
+    public void removeTree(Tree tree, boolean leaveProduct) {
+        if (plants.removeValue(tree, true)) {
             int stompZ = tree.getCurrentStage().treeForm.get(2);
             PlantBlock[][][] treeParts = tree.getBlocks();
             for (int x = 0; x < treeParts.length; x++) {
@@ -104,7 +103,7 @@ public class PlantContainer extends IntervalTurnable implements Initable, ModelC
                         PlantBlock block = treeParts[x][y][z];
                         if (block == null) continue;
                         localMap.setPlantBlock(block.getPosition(), null);
-                        leavePlantProduct(block);
+                        if(leaveProduct) leavePlantProduct(block);
                     }
                 }
             }
@@ -119,49 +118,54 @@ public class PlantContainer extends IntervalTurnable implements Initable, ModelC
     /**
      * Deletes block from map and it's plant. If plants was a Plant, deletes is too.
      * If plant was a Tree than checks deleting for other effects.
-     *
-     * @param block
      */
-    public void removePlantBlock(PlantBlock block, boolean leaveProducts) {
+    public void removePlantBlock(PlantBlock block, boolean leaveProducts, boolean createTasks) {
         AbstractPlant plant = block.getPlant();
         if (plant == null) return;
         if (plant instanceof Plant) {
-            if (plants.remove(plant)) localMap.setPlantBlock(block.getPosition(), null);
+            if (plants.removeValue(plant, true)) localMap.setPlantBlock(block.getPosition(), null);
         } else if (plant instanceof Tree) {
-            removeBlockFromTree(block, (Tree) plant);
+            removeBlockFromTree(block, leaveProducts, createTasks);
         }
     }
 
-    public void removeBlockFromTree(PlantBlock block, Tree tree) {
-        fellTree(tree, OrientationEnum.N);
+    private void removeBlockFromTree(PlantBlock block, boolean leaveProducts, boolean createTasks) {
+        fellTree((Tree) block.getPlant(), OrientationEnum.N, createTasks);
 //        Position relPos = tree.getRelativePosition(block.getPosition());
 //        tree.getBlocks()[relPos.getX()][relPos.getY()][relPos.getZ()] = null;
 //        localMap.setPlantBlock(block.getPosition(), null);
         //TODO manage case for separating tree parts from each other
     }
 
-    public void fellTree(Tree tree, OrientationEnum orientation) {
-        if (orientation == OrientationEnum.N) {
-            Position treePosition = tree.getPosition();
-            int stompZ = tree.getCurrentStage().treeForm.get(2);
-            PlantBlock[][][] treeParts = tree.getBlocks();
-            for (int x = 0; x < treeParts.length; x++) {
-                for (int y = 0; y < treeParts[x].length; y++) {
-                    for (int z = stompZ; z < treeParts[x][y].length; z++) {
-                        PlantBlock block = treeParts[x][y][z];
-                        if (block == null) continue;
-                        Position newPosition = translatePosition(block.getPosition().toVector3(), treePosition.toVector3(), orientation);
-                        if (localMap.getBlockType(newPosition) != WALL_CODE) {
-                            localMap.setPlantBlock(block.getPosition(), null);
-                            block.setPosition(newPosition);
-                            localMap.setPlantBlock(block.getPosition(), block);
-                        } else {
-                            treeParts[x][y][z] = null;
-                        }
-                    }
-                }
-            }
-        }
+    /**
+     * Fells given tree, in specified direction, and creates tasks to chop logs if needed (after manual chopping).
+     * //TODO implement fallen trees.
+     * //TODO add direction.
+     * //TODO add tasks creation.
+     */
+    public void fellTree(Tree tree, OrientationEnum orientation, boolean createTasks) {
+        removeTree(tree, true);
+//        if (orientation == OrientationEnum.N) {
+//            Position treePosition = tree.getPosition();
+//            int stompZ = tree.getCurrentStage().treeForm.get(2);
+//            PlantBlock[][][] treeParts = tree.getBlocks();
+//            for (int x = 0; x < treeParts.length; x++) {
+//                for (int y = 0; y < treeParts[x].length; y++) {
+//                    for (int z = stompZ; z < treeParts[x][y].length; z++) {
+//                        PlantBlock block = treeParts[x][y][z];
+//                        if (block == null) continue;
+//                        Position newPosition = translatePosition(block.getPosition().toVector3(), treePosition.toVector3(), orientation);
+//                        if (localMap.getBlockType(newPosition) != WALL_CODE) {
+//                            localMap.setPlantBlock(block.getPosition(), null);
+//                            block.setPosition(newPosition);
+//                            localMap.setPlantBlock(block.getPosition(), block);
+//                        } else {
+//                            treeParts[x][y][z] = null;
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     private Position translatePosition(Vector3 position, Vector3 center, OrientationEnum orientation) {
@@ -190,9 +194,4 @@ public class PlantContainer extends IntervalTurnable implements Initable, ModelC
             localMap.setPlantBlock(((Plant) plant).getBlock().getPosition(), null);
         }
     }
-
-    public List<AbstractPlant> getPlants() {
-        return plants;
-    }
-
 }

@@ -11,8 +11,12 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.Array;
 import stonering.screen.SimpleScreen;
 import stonering.util.global.StaticSkin;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @author Alexander on 19.02.2019.
@@ -20,7 +24,24 @@ import stonering.util.global.StaticSkin;
 public class qwer {
 
     public static void main(String[] args) {
+        Array<Integer> qwer = new Array<>(new Integer[]{1,2,3,4,56,7,7,8});
+        for (int i = 0; i < qwer.size; i++) {
+            if(i == 4) qwer.removeIndex(i);
+        }
+        for (Integer integer : qwer) {
+            if(integer == 4) qwer.removeIndex(5);
+        }
+        qwer.forEach(integer -> {if(integer == 4) qwer.removeIndex(5);});
+        ArrayList<Integer> asdf = new ArrayList<>();
+        asdf.addAll(Arrays.asList(qwer.items));
+        for (int i = 0; i < asdf.size(); i++) {
+            if(i == 4) asdf.remove(i);
+        }
+        asdf.forEach(integer -> {if(integer == 4) asdf.remove(5);});
         new LwjglApplication(new OrthographicCameraExample());
+        for (Integer integer : asdf) {
+            if(integer == 4) asdf.remove(5);
+        }
     }
 
     public static class OrthographicCameraExample extends Game {

@@ -4,6 +4,7 @@ import stonering.enums.plants.PlantBlocksTypeEnum;
 import stonering.util.geometry.Position;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class to be contained on LocalMap. Also stores render data
@@ -67,15 +68,15 @@ public class PlantBlock {
     }
 
     public ArrayList<String> getHarvestProducts() {
-        return harvestProducts;
+        return harvestProducts == null ? new ArrayList<>() : harvestProducts;
     }
 
     public void setHarvestProducts(ArrayList<String> harvestProducts) {
         this.harvestProducts = harvestProducts;
     }
 
-    public ArrayList<String> getCutProducts() {
-        return cutProducts;
+    public List<String> getCutProducts() {
+        return cutProducts == null ? new ArrayList<>() : cutProducts;
     }
 
     public void setCutProducts(ArrayList<String> cutProducts) {

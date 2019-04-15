@@ -49,5 +49,87 @@
                 "treeForm":["2", "5", "2", "1", "5"]
             }
         ]
+    },
+    {
+        "name":"oak",
+        "title":"Oak",
+        "description":"Oak",
+        "materialName":"oak",
+        "temperatureBounds":["-40", "40", "-40", "40"],
+        "rainfallBounds":["0", "100"],
+        "placingTags":["water_near", "water_far"],
+        "lifeStages":[
+            {
+                "titlePrefixSuffix":["", "sapling"],
+                "stageLength":"12",
+                "cutProducts":["branch", "root"],
+                "atlasXY":["0", "2"],
+                "color":"0xffffffff",
+                "treeForm":["0", "1", "1", "0", "0"]
+            },
+            {
+                "titlePrefixSuffix":["young", ""],
+                "stageLength":"60",
+                "cutProducts":["branch", "root", "log"],
+                "atlasXY":["0", "2"],
+                "color":"0xffffffff",
+                "treeForm":["1", "3", "2", "1", "0"]
+            }, {
+                "titlePrefixSuffix":["", ""],
+                "stageLength":"180",
+                "cutProducts":["branch", "root", "log"],
+                "atlasXY":["0", "2"],
+                "color":"0xffffffff",
+                "treeForm":["2", "5", "2", "1", "5"]
+            }, {
+                "titlePrefixSuffix":["old", ""],
+                "stageLength":"240",
+                "cutProducts":["branch", "root", "log"],
+                "atlasXY":["0", "2"],
+                "color":"0xffffffff",
+                "treeForm":["2", "5", "2", "1", "5"]
+            }
+        ]
+    },
+    {
+        "name":"birch",
+        "title":"Birch",
+        "description":"Birch",
+        "materialName":"birch",
+        "temperatureBounds":["-40", "40", "-40", "40"],
+        "rainfallBounds":["0", "100"],
+        "placingTags":["water_near", "water_far"],
+        "lifeStages":[
+            {
+                "titlePrefixSuffix":["", "sapling"],
+                "stageLength":"12",
+                "cutProducts":["branch", "root"],
+                "atlasXY":["0", "3"],
+                "color":"0xffffffff",
+                "treeForm":["0", "1", "1", "0", "0"]
+            },
+            {
+                "titlePrefixSuffix":["young", ""],
+                "stageLength":"60",
+                "cutProducts":["branch", "root", "log"],
+                "atlasXY":["0", "3"],
+                "color":"0xffffffff",
+                "treeForm":["1", "3", "2", "1", "0"]
+            }, {
+                "titlePrefixSuffix":["", ""],
+                "stageLength":"180",
+                "cutProducts":["branch", "root", "log"],
+                "atlasXY":["0", "3"],
+                "color":"0xffffffff",
+                "treeForm":["2", "5", "2", "1", "5"]
+            }, {
+                "titlePrefixSuffix":["old", ""],
+                "stageLength":"240",
+                "cutProducts":["branch", "root", "log"],
+                "atlasXY":["0", "3"],
+                "color":"0xffffffff",
+                "treeForm":["2", "5", "2", "1", "5"]
+            }
+        ]
     }
 ]

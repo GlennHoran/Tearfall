@@ -10,7 +10,6 @@ import stonering.util.geometry.Position;
 public abstract class AbstractPlant extends AspectHolder {
     protected PlantType type;
     protected int age; // months
-    protected boolean dead;
     private int currentStage;
 
     protected AbstractPlant(Position position) {
@@ -21,17 +20,17 @@ public abstract class AbstractPlant extends AspectHolder {
         return type.lifeStages.get(currentStage);
     }
 
-    /**-
+    /**
+     * -
      * Increases age by 1 month.
      *
      * @return 1, if stage changed, -1 if last stage ended.
      */
     public int increaceAge() {
-        if (dead) return -1;
         age++;
-        if (type.lifeStages.get(currentStage).getStageEnd() > age) return 0;
+        if (currentStage < type.lifeStages.size() && type.lifeStages.get(currentStage).getStageEnd() > age) return 0;
         currentStage++;
-        return currentStage == type.lifeStages.size() ? -1 : 1;
+        return currentStage >= type.lifeStages.size() ? -1 : 1;
     }
 
     public abstract boolean isHarvestable();
@@ -54,14 +53,6 @@ public abstract class AbstractPlant extends AspectHolder {
 
     public void setAge(int age) {
         this.age = age;
-    }
-
-    public boolean isDead() {
-        return dead;
-    }
-
-    public void setDead(boolean dead) {
-        this.dead = dead;
     }
 
     public abstract Position getPosition();

@@ -105,6 +105,7 @@ public class TaskContainer implements ModelComponent, Initable {
                 return task;
             }
             case CUT:
+                //TODO add specific action for cutting all plants.
             case CHOP: {
                 ChopTreeAction chopTreeAction = new ChopTreeAction(designation);
                 Task task = new Task("designation", TaskTypesEnum.DESIGNATION, chopTreeAction, priority);

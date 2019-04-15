@@ -32,7 +32,6 @@ public class MainGameModel extends GameModel {
         put(container.getWorld());
         put(container.getLocalMap());
         put(new LocalTileMap(get(LocalMap.class)));
-
         put(new PlantContainer(container.getPlants()));
         put(new BuildingContainer(container.getBuildings()));
         put(new UnitContainer(container.getUnits()));

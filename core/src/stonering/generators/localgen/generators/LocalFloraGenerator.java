@@ -100,8 +100,8 @@ public class LocalFloraGenerator {
      * Generates and places trees on local map. Uses limited attempts with random positions.
      */
     private void placeInitialTrees(String specimen, float amount) {
+        amount *= 100;
         TreeGenerator treeGenerator = new TreeGenerator();
-
         Random random = new Random();
         Tree tree = treeGenerator.generateTree(specimen, 0);
         for (int tries = 500; amount > 0 && tries > 0; tries--) {
