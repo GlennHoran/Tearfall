@@ -87,7 +87,7 @@
         {
             "stageLength": "1",
             "harvestProducts": ["blueberry"],
-            "cutProducts": ["blueberry"],
+            "cutProducts": null,
             "atlasXY": ["2", "0"],
             "color": "0xffffffff"
         }
@@ -112,7 +112,7 @@
             {
                 "stageLength": "3",
                 "harvestProducts": null,
-                "cutProducts": null,
+                "cutProducts": null, // mushroom
                 "atlasXY": ["4", "0"],
                 "color": "0xffffffff"
             },

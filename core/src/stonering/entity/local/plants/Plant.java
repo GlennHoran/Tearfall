@@ -1,5 +1,6 @@
 package stonering.entity.local.plants;
 
+import stonering.enums.plants.PlantType;
 import stonering.util.geometry.Position;
 
 /**
@@ -15,9 +16,15 @@ public class Plant extends AbstractPlant {
         this.age = age;
     }
 
+    /**
+     * Small plants should be harvested if they currently have harvestProducts (like berries),
+     * or cutProducts (like mushrooms)
+     * @return
+     */
     @Override
     public boolean isHarvestable() {
-        return getCurrentStage().harvestProducts != null;
+        PlantType.PlantLifeStage stage =getCurrentStage();
+        return stage.harvestProducts != null || stage.cutProducts != null;
     }
 
     public PlantBlock getBlock() {

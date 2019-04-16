@@ -41,6 +41,11 @@ public class ItemGenerator {
      * MVP method for creating items.
      */
     public Item generateItem(String name, int material) {
+        ItemType type = itemTypeMap.getItemType(name);
+        if(type == null) {
+            TagLoggersEnum.GENERATION.logWarn("Item type with name " + name + " not found.");
+            return null;
+        }
         Item item = new Item(null, itemTypeMap.getItemType(name));
         item.setMaterial(material);
         generateItemAspects(item);

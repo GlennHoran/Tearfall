@@ -10,6 +10,7 @@ import stonering.entity.local.plants.Plant;
 import stonering.entity.local.plants.PlantBlock;
 import stonering.entity.local.plants.Tree;
 import stonering.entity.local.unit.aspects.equipment.EquipmentAspect;
+import stonering.enums.OrientationEnum;
 import stonering.game.GameMvc;
 import stonering.game.model.lists.ItemContainer;
 import stonering.game.model.lists.PlantContainer;
@@ -41,7 +42,6 @@ public class ChopTreeAction extends Action {
 
     /**
      * Create action for equipping available chopping tool.
-     * @return
      */
     private boolean addActionToTask() {
         Item target = GameMvc.instance().getModel().get(ItemContainer.class).getItemAvailableBySelector(toolItemSelector, task.getPerformer().getPosition());
@@ -51,14 +51,17 @@ public class ChopTreeAction extends Action {
         return true;
     }
 
+    /**
+     *
+     */
     @Override
     public void performLogic() {
         TagLoggersEnum.TASKS.logDebug("tree chopping started at " + actionTarget.getPosition().toString() + " by " + task.getPerformer().toString());
         PlantBlock block = GameMvc.instance().getModel().get(LocalMap.class).getPlantBlock(actionTarget.getPosition());
         if(block == null) return;
         AbstractPlant plant = block.getPlant();
-        if (plant.getType().isTree()) {
-            GameMvc.instance().getModel().get(PlantContainer.class).removePlantBlock(block, true, true);
+        if (plant instanceof Tree) {
+            GameMvc.instance().getModel().get(PlantContainer.class).fellTree((Tree) plant, OrientationEnum.N, true);
         }
     }
 

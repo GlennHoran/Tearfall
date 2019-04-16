@@ -87,54 +87,38 @@ public class PlantContainer extends IntervalTurnable implements Initable, ModelC
         }
     }
 
-    public void removePlant(Plant plant, boolean leaveProduct) {
-        PlantBlock block = plant.getBlock();
-        if (plants.removeValue(plant,true)) localMap.setPlantBlock(plant.getPosition(), null);
-        if(leaveProduct) leavePlantProduct(block);
-    }
-
-    public void removeTree(Tree tree, boolean leaveProduct) {
-        if (plants.removeValue(tree, true)) {
-            int stompZ = tree.getCurrentStage().treeForm.get(2);
-            PlantBlock[][][] treeParts = tree.getBlocks();
-            for (int x = 0; x < treeParts.length; x++) {
-                for (int y = 0; y < treeParts[x].length; y++) {
-                    for (int z = stompZ; z < treeParts[x][y].length; z++) {
-                        PlantBlock block = treeParts[x][y][z];
-                        if (block == null) continue;
-                        localMap.setPlantBlock(block.getPosition(), null);
-                        if(leaveProduct) leavePlantProduct(block);
+    /**
+     * Removes plant from container and it's block from map.
+     * Can leave block's products (creates cut and harvest).
+     */
+    public void removePlant(AbstractPlant plant, boolean leaveProduct) {
+        if (plants.removeValue(plant, true)) {
+            if (plant instanceof Plant) {
+                PlantBlock block = ((Plant) plant).getBlock();
+                if (block != null) removePlantBlock(block, leaveProduct);
+            } else if (plant instanceof Tree) {
+                PlantBlock[][][] treeParts = ((Tree) plant).getBlocks();
+                for (PlantBlock[][] treePart : treeParts) {
+                    for (PlantBlock[] plantBlocks : treePart) {
+                        for (PlantBlock block : plantBlocks) {
+                            if (block != null) removePlantBlock(block, leaveProduct);
+                        }
                     }
                 }
             }
         }
     }
 
-    private void leavePlantProduct(PlantBlock block) {
-        ArrayList<Item> items = new PlantProductGenerator().generateCutProduct(block);
-        items.forEach((item) -> gameMvc.getModel().get(ItemContainer.class).addItem(item, block.getPosition()));
-    }
-
     /**
-     * Deletes block from map and it's plant. If plants was a Plant, deletes is too.
-     * If plant was a Tree than checks deleting for other effects.
+     * Removes single plant block from map. Can leave products.
      */
-    public void removePlantBlock(PlantBlock block, boolean leaveProducts, boolean createTasks) {
-        AbstractPlant plant = block.getPlant();
-        if (plant == null) return;
-        if (plant instanceof Plant) {
-            if (plants.removeValue(plant, true)) localMap.setPlantBlock(block.getPosition(), null);
-        } else if (plant instanceof Tree) {
-            removeBlockFromTree(block, leaveProducts, createTasks);
+    private void removePlantBlock(PlantBlock block, boolean leaveProduct) {
+        if (block == null) return;
+        localMap.setPlantBlock(block.getPosition(), null);
+        if (!leaveProduct) return;
+        for (Item item : new PlantProductGenerator().generateCutProduct(block)) {
+            if(item != null) gameMvc.getModel().get(ItemContainer.class).addItem(item, block.getPosition());
         }
-    }
-
-    private void removeBlockFromTree(PlantBlock block, boolean leaveProducts, boolean createTasks) {
-        fellTree((Tree) block.getPlant(), OrientationEnum.N, createTasks);
-//        Position relPos = tree.getRelativePosition(block.getPosition());
-//        tree.getBlocks()[relPos.getX()][relPos.getY()][relPos.getZ()] = null;
-//        localMap.setPlantBlock(block.getPosition(), null);
-        //TODO manage case for separating tree parts from each other
     }
 
     /**
@@ -144,7 +128,7 @@ public class PlantContainer extends IntervalTurnable implements Initable, ModelC
      * //TODO add tasks creation.
      */
     public void fellTree(Tree tree, OrientationEnum orientation, boolean createTasks) {
-        removeTree(tree, true);
+        removePlant(tree, true);
 //        if (orientation == OrientationEnum.N) {
 //            Position treePosition = tree.getPosition();
 //            int stompZ = tree.getCurrentStage().treeForm.get(2);

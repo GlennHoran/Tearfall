@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class to be contained on LocalMap. Also stores render data
+ * Class to be contained on LocalMap. Also stores render data.
  *
  * @author Alexander Kuzyakov on 30.11.2017.
  */
@@ -17,8 +17,8 @@ public class PlantBlock {
     private int material;
     private int blockType; // type from enum
     private int[] atlasXY;
-    private ArrayList<String> harvestProducts;
-    private ArrayList<String> cutProducts;
+    private ArrayList<String> harvestProducts; // updated during plant life
+    private ArrayList<String> cutProducts;     //
 
     public PlantBlock(int material, int blockType) {
         this.material = material;

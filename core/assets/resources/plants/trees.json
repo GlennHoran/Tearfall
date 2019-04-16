@@ -42,7 +42,7 @@
                 "treeForm":["2", "5", "2", "1", "5"]
             }, {
                 "titlePrefixSuffix":["old", ""],
-                "stageLength":"240",
+                "stageLength":"120",
                 "cutProducts":["branch", "root", "log"],
                 "atlasXY":["0", "1"],
                 "color":"0xffffffff",
@@ -83,7 +83,7 @@
                 "treeForm":["2", "5", "2", "1", "5"]
             }, {
                 "titlePrefixSuffix":["old", ""],
-                "stageLength":"240",
+                "stageLength":"360",
                 "cutProducts":["branch", "root", "log"],
                 "atlasXY":["0", "2"],
                 "color":"0xffffffff",
@@ -124,7 +124,7 @@
                 "treeForm":["2", "5", "2", "1", "5"]
             }, {
                 "titlePrefixSuffix":["old", ""],
-                "stageLength":"240",
+                "stageLength":"120",
                 "cutProducts":["branch", "root", "log"],
                 "atlasXY":["0", "3"],
                 "color":"0xffffffff",
