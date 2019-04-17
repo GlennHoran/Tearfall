@@ -2,7 +2,6 @@ package stonering.game.model.lists;
 
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import stonering.enums.OrientationEnum;
 import stonering.enums.blocks.BlockTypesEnum;
 import stonering.game.GameMvc;
@@ -20,7 +19,6 @@ import stonering.util.global.CompatibleArray;
 import stonering.util.global.Initable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -37,6 +35,10 @@ public class PlantContainer extends IntervalTurnable implements Initable, ModelC
 
     public PlantContainer(List<AbstractPlant> plants) {
         this.plants = new CompatibleArray<>(plants);
+    }
+
+    public PlantContainer() {
+        this(new ArrayList<>());
     }
 
     @Override

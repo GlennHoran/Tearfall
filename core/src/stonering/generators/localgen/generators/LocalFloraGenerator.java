@@ -248,7 +248,7 @@ public class LocalFloraGenerator {
     }
 
     /**
-     * Specimen will be spreaded more widely, if its grom range is closer to year middle temperature.
+     * Specimen will be spreaded more widely, if its grow range is closer to year middle temperature.
      */
     private float getSpreadModifier(String specimen) {
         PlantType type = PlantMap.getInstance().getPlantType(specimen);

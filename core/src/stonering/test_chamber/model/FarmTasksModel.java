@@ -4,32 +4,28 @@ import stonering.entity.local.environment.CelestialBody;
 import stonering.entity.local.environment.GameCalendar;
 import stonering.entity.local.environment.aspects.CelestialCycleAspect;
 import stonering.entity.local.environment.aspects.CelestialLightSourceAspect;
-import stonering.entity.local.plants.AbstractPlant;
-import stonering.entity.local.plants.Tree;
+import stonering.entity.local.unit.Unit;
+import stonering.entity.local.zone.FarmZone;
 import stonering.entity.world.World;
+import stonering.enums.ZoneTypesEnum;
 import stonering.enums.blocks.BlockTypesEnum;
 import stonering.enums.materials.MaterialMap;
+import stonering.enums.plants.PlantMap;
 import stonering.game.model.EntitySelector;
 import stonering.game.model.GameModel;
+import stonering.game.model.lists.PlantContainer;
 import stonering.game.model.lists.TaskContainer;
 import stonering.game.model.lists.UnitContainer;
 import stonering.game.model.lists.ZonesContainer;
 import stonering.game.model.local_map.LocalMap;
-import stonering.game.model.lists.PlantContainer;
 import stonering.game.view.tilemaps.LocalTileMap;
-import stonering.generators.plants.TreeGenerator;
+import stonering.generators.creatures.CreatureGenerator;
 import stonering.util.geometry.Position;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class SingleTreeModel extends GameModel {
-    private static final int MAP_SIZE = 11;
-    private static final int TREE_CENTER = 5;
-
-    public SingleTreeModel() {
-        reset();
-    }
+/**
+ * Model with small farm to simulate all cases with creation tasks by farm.
+ */
+public class FarmTasksModel extends GameModel {
 
     @Override
     public void init() {
@@ -44,35 +40,42 @@ public class SingleTreeModel extends GameModel {
     public void reset() {
         put(createWorld());
         put(createMap());
-        put(new PlantContainer(createTree()));
+        put(new PlantContainer());
         put(new LocalTileMap(get(LocalMap.class)));
         put(new EntitySelector());
         put(new GameCalendar());
         put(new UnitContainer());
         put(new TaskContainer());
         put(new ZonesContainer());
+        createFarm();
+        createUnit();
+    }
+
+    private void createFarm() {
+        Position start = new Position(3,3,2);
+        Position end = new Position(5,5,2);
+        get(ZonesContainer.class).createNewZone(start, end, ZoneTypesEnum.FARM);
+        FarmZone farm = (FarmZone) get(ZonesContainer.class).getZone(start);
+        farm.setPlant(PlantMap.getInstance().getPlantType("tomato"), true);
+    }
+
+    private void createUnit() {
+        Unit unit = new CreatureGenerator().generateUnit("human");
+        unit.setPosition(new Position(0,0,2));
+        get(UnitContainer.class).
     }
 
     private LocalMap createMap() {
-        LocalMap localMap = new LocalMap(MAP_SIZE, MAP_SIZE, 20);
+        LocalMap localMap = new LocalMap(9, 9, 20);
         MaterialMap materialMap = MaterialMap.getInstance();
-        for (int x = 0; x < MAP_SIZE; x++) {
-            for (int y = 0; y < MAP_SIZE; y++) {
+        for (int x = 0; x < 9; x++) {
+            for (int y = 0; y < 9; y++) {
                 localMap.setBlock(x, y, 0, BlockTypesEnum.WALL, materialMap.getId("soil"));
                 localMap.setBlock(x, y, 1, BlockTypesEnum.WALL, materialMap.getId("soil"));
                 localMap.setBlock(x, y, 2, BlockTypesEnum.FLOOR, materialMap.getId("soil"));
             }
         }
         return localMap;
-    }
-
-    private List<AbstractPlant> createTree() {
-        List<AbstractPlant> plants = new ArrayList<>();
-        TreeGenerator treeGenerator = new TreeGenerator();
-        Tree tree = treeGenerator.generateTree("willow", 0);
-        tree.setPosition(new Position(TREE_CENTER, TREE_CENTER, 2));
-        plants.add(tree);
-        return plants;
     }
 
     private World createWorld() {
@@ -87,6 +90,6 @@ public class SingleTreeModel extends GameModel {
 
     @Override
     public String toString() {
-        return "SingleTreeModel";
+        return "FarmTasksModel";
     }
 }
